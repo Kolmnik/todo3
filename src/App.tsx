@@ -10,26 +10,31 @@ function App() {
     const changefilterredUsers = (newfilterredUsers: filterUsersType) => {
         setFilterredUsers(newfilterredUsers)
     }
-
     const filterUsers = () => {
+        const SummMassiveFunc = (massive: usersListType) => {
+            let count
+            count = (massive.languages.map((m) => m.langKnowledge))
+            const summMassive = (accumulator: number, currentValue: number) => accumulator + currentValue
+            return count.reduce(summMassive) / count.length
+        }
         if (filterredUsers === 'not') {
-            return removeUsers.filter(f => {
-                let count
-                count =  (f.languages.map((m) => m.langKnowledge))
-                console.log(count)
-            })
+            return removeUsers.filter(f => SummMassiveFunc(f) <= 60)
         }
         if (filterredUsers === 'yes') {
-            return removeUsers
+            return removeUsers.filter(f => SummMassiveFunc(f) > 60)
         } else {
             return removeUsers
         }
     }
-
-    console.log(usersList)
+    const removeToDoUsers = (id: number) => {
+        const newUsers = removeUsers.filter(f => f.id !== id)
+        setRemoveUsers(newUsers)
+    }
+    // console.log(usersList)
     return (
         <div className="App">
-            <StudentsFound usersList={filterUsers() } changeUsers={changefilterredUsers}/>
+            <StudentsFound usersList={filterUsers()} changeUsers={changefilterredUsers}
+                           removeToDoUsers={removeToDoUsers}/>
         </div>
     );
 }
@@ -40,6 +45,7 @@ type filterUsersType = 'all' | 'not' | 'yes'
 type StudentsFoundType = {
     usersList: Array<usersListType>
     changeUsers: Function
+    removeToDoUsers: Function
 }
 
 
@@ -47,6 +53,7 @@ const StudentsFound = (props: StudentsFoundType) => {
     const usersFunc = props.usersList.map(t => {
         return (
             <div className={'users'}>
+                <button onClick={() => props.removeToDoUsers(t.id)}>Удалить</button>
                 <p>Студент - {t.name} </p>
                 {t.languages.map(l => {
                     return (
@@ -55,6 +62,13 @@ const StudentsFound = (props: StudentsFoundType) => {
                         </div>
                     )
                 })}
+                <p className={'users'}>Плохая успеваемость по: {
+                    t.languages.map(l => {
+                        if (l.langKnowledge <= 60) {
+                            return (<p><span>{l.langName},</span></p>)
+                        }
+                    })
+                }</p>
             </div>
         )
     })
@@ -62,9 +76,9 @@ const StudentsFound = (props: StudentsFoundType) => {
         <div className={'allusers'}>
             {usersFunc}
             <div className={'buttons'}>
-                <button>Все</button>
-                <button onClick={()=>props.changeUsers('not')}>Отстающие</button>
-                <button>Успевающие</button>
+                <button onClick={() => props.changeUsers('all')}>Все</button>
+                <button onClick={() => props.changeUsers('not')}>Отстающие</button>
+                <button onClick={() => props.changeUsers('yes')}>Успевающие</button>
             </div>
         </div>
     )

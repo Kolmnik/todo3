@@ -24,7 +24,7 @@ export const usersList = [
     },
     {
         id: 2,
-        name: 'Nikita ',
+        name: 'Pasha ',
         years: 18,
         languages: [{langName: 'Eng ', langKnowledge: 63}, {langName: 'Rus ', langKnowledge: 85}, {
             langName: 'Fr',
@@ -33,7 +33,7 @@ export const usersList = [
     },
     {
         id: 3,
-        name: 'Shasha ',
+        name: 'Igor ',
         years: 18,
         languages: [{langName: 'Eng ', langKnowledge: 75}, {langName: 'Rus ', langKnowledge: 100},],
     }
